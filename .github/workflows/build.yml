@@ -22,6 +22,12 @@ jobs:
           test -f project/CMakeLists.txt
           test -f project/src/main.cpp
 
+      - name: Inspect current autoplayer implementation
+        run: |
+          echo "===== MAIN CPP START ====="
+          cat project/src/main.cpp
+          echo "===== MAIN CPP END ====="
+
       - name: Fix Android filesystem path conversions
         run: |
           python3 - <<'PY'
