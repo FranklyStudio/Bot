@@ -22,6 +22,21 @@ jobs:
           test -f project/CMakeLists.txt
           test -f project/src/main.cpp
 
+      - name: Normalize Geode version in mod metadata
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p = Path("project/mod.json")
+          data = json.loads(p.read_text())
+          version = data.get("geode")
+          if isinstance(version, str) and version.startswith("v"):
+              data["geode"] = version[1:]
+              p.write_text(json.dumps(data, indent=4) + "\\n")
+              print(f"Changed Geode version {version} to {data['geode']}")
+          else:
+              print(f"Geode version already normalized: {version}")
+
       - name: Build Android 64-bit Geode mod
         id: build
         uses: geode-sdk/build-geode-mod@main
