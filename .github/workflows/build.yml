@@ -17,7 +17,7 @@ jobs:
       - name: Extract mod source from ZIP
         run: |
           mkdir -p project
-          unzip -o AutoPlayerBot.zip -d project
+          unzip -o AutoPlayerBot.zip -d project || true
           test -f project/mod.json
           test -f project/CMakeLists.txt
           test -f project/src/main.cpp
