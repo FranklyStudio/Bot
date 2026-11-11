@@ -22,6 +22,19 @@ jobs:
           test -f project/CMakeLists.txt
           test -f project/src/main.cpp
 
+      - name: Fix Android filesystem path conversions
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path("project/src/main.cpp")
+          s = p.read_text()
+          s = s.replace("std::filesystem::create_directories(dir, ec)", "std::filesystem::create_directories(std::filesystem::path(dir.string()), ec)")
+          s = s.replace("std::ofstream out(macroPath(key), std::ios::trunc)", "std::ofstream out(macroPath(key).string(), std::ios::trunc)")
+          s = s.replace("std::ifstream in(macroPath(key))", "std::ifstream in(macroPath(key).string())")
+          p.write_text(s)
+          print("Applied Android filesystem path compatibility fixes")
+          PY
+
       - name: Normalize Geode version in mod metadata
         run: |
           python3 - <<'PY'
