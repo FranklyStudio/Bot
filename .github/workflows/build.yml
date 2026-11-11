@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     paths:
-      - "GeodeAutoPilotBot.zip"
+      - "AutoPlayerBot.zip"
       - ".github/workflows/build.yml"
 
 jobs:
@@ -17,7 +17,7 @@ jobs:
       - name: Extract mod source from ZIP
         run: |
           mkdir -p project
-          unzip -o GeodeAutoPilotBot.zip -d project
+          unzip -o AutoPlayerBot.zip -d project
           test -f project/mod.json
           test -f project/CMakeLists.txt
           test -f project/src/main.cpp
@@ -31,6 +31,7 @@ jobs:
           s = s.replace("std::filesystem::create_directories(dir, ec)", "std::filesystem::create_directories(std::filesystem::path(dir.string()), ec)")
           s = s.replace("std::ofstream out(macroPath(key), std::ios::trunc)", "std::ofstream out(macroPath(key).string(), std::ios::trunc)")
           s = s.replace("std::ifstream in(macroPath(key))", "std::ifstream in(macroPath(key).string())")
+          s = s.replace("int id = level->m_levelID.value();", "int id = level->m_levelID")
           p.write_text(s)
           print("Applied Android filesystem path compatibility fixes")
           PY
@@ -55,30 +56,6 @@ jobs:
           sdk: 5.11.2
           target: Android64
           configure-args: -DCMAKE_UNITY_BUILD=OFF
-
-      - name: Normalize packaged Geode metadata
-        run: |
-          python3 - <<'PY'
-          import json, zipfile
-          from pathlib import Path
-          packages = list(Path("project").parent.glob("**/*.geode"))
-          if not packages:
-              packages = list(Path(".").glob("**/*.geode"))
-          if not packages:
-              raise SystemExit("No .geode package found to normalize")
-          for package in packages:
-              temp = package.with_suffix(".geode.tmp")
-              with zipfile.ZipFile(package, "r") as src, zipfile.ZipFile(temp, "w", zipfile.ZIP_DEFLATED) as dst:
-                  for item in src.infolist():
-                      data = src.read(item.filename)
-                      if item.filename == "mod.json":
-                          meta = json.loads(data)
-                          meta["geode"] = "v5.11.2"
-                          data = (json.dumps(meta, indent=4) + chr(10)).encode()
-                      dst.writestr(item, data)
-              temp.replace(package)
-              print(f"Normalized Geode metadata in {package}")
-          PY
 
       - name: Upload built Geode package
         uses: actions/upload-artifact@v4
