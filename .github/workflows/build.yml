@@ -32,7 +32,7 @@ jobs:
           version = data.get("geode")
           if isinstance(version, str) and version.startswith("v"):
               data["geode"] = version[1:]
-              p.write_text(json.dumps(data, indent=4) + "\\n")
+              p.write_text(json.dumps(data, indent=4) + "\n")
               print(f"Changed Geode version {version} to {data['geode']}")
           else:
               print(f"Geode version already normalized: {version}")
