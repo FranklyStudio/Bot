@@ -52,7 +52,7 @@ jobs:
         uses: geode-sdk/build-geode-mod@main
         with:
           path: project
-          sdk: latest
+          sdk: 5.11.2
           target: Android64
           configure-args: -DCMAKE_UNITY_BUILD=OFF
 
