@@ -43,6 +43,7 @@ jobs:
         with:
           path: project
           target: Android64
+          configure-args: -DCMAKE_UNITY_BUILD=OFF
 
       - name: Upload built Geode package
         uses: actions/upload-artifact@v4
