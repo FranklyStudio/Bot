@@ -56,6 +56,30 @@ jobs:
           target: Android64
           configure-args: -DCMAKE_UNITY_BUILD=OFF
 
+      - name: Normalize packaged Geode metadata
+        run: |
+          python3 - <<'PY'
+          import json, zipfile
+          from pathlib import Path
+          packages = list(Path("project").parent.glob("**/*.geode"))
+          if not packages:
+              packages = list(Path(".").glob("**/*.geode"))
+          if not packages:
+              raise SystemExit("No .geode package found to normalize")
+          for package in packages:
+              temp = package.with_suffix(".geode.tmp")
+              with zipfile.ZipFile(package, "r") as src, zipfile.ZipFile(temp, "w", zipfile.ZIP_DEFLATED) as dst:
+                  for item in src.infolist():
+                      data = src.read(item.filename)
+                      if item.filename == "mod.json":
+                          meta = json.loads(data)
+                          meta["geode"] = "v5.11.2"
+                          data = (json.dumps(meta, indent=4) + "\\n").encode()
+                      dst.writestr(item, data)
+              temp.replace(package)
+              print(f"Normalized Geode metadata in {package}")
+          PY
+
       - name: Upload built Geode package
         uses: actions/upload-artifact@v4
         with:
