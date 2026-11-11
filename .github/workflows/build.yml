@@ -42,6 +42,7 @@ jobs:
         uses: geode-sdk/build-geode-mod@main
         with:
           path: project
+          sdk: nightly
           target: Android64
           configure-args: -DCMAKE_UNITY_BUILD=OFF
 
