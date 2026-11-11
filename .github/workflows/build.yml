@@ -74,7 +74,7 @@ jobs:
                       if item.filename == "mod.json":
                           meta = json.loads(data)
                           meta["geode"] = "v5.11.2"
-                          data = (json.dumps(meta, indent=4) + "\\n").encode()
+                          data = (json.dumps(meta, indent=4) + chr(10)).encode()
                       dst.writestr(item, data)
               temp.replace(package)
               print(f"Normalized Geode metadata in {package}")
