@@ -42,8 +42,8 @@ jobs:
           from pathlib import Path
           p = Path("project/mod.json")
           data = json.loads(p.read_text())
-          data["geode"] = "6.0.0-alpha.1"
-          data.setdefault("gd", {})["android"] = "2.2091"
+          data["geode"] = "5.0.0"
+          data.setdefault("gd", {})["android"] = "2.2081"
           p.write_text(json.dumps(data, indent=4) + "\n")
           print(f"Building against Geode SDK {data['geode']}")
 
@@ -52,7 +52,7 @@ jobs:
         uses: geode-sdk/build-geode-mod@main
         with:
           path: project
-          sdk: nightly
+          sdk: latest
           target: Android64
           configure-args: -DCMAKE_UNITY_BUILD=OFF
 
