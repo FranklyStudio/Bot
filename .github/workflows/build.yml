@@ -29,13 +29,9 @@ jobs:
           from pathlib import Path
           p = Path("project/mod.json")
           data = json.loads(p.read_text())
-          version = data.get("geode")
-          if isinstance(version, str) and version.startswith("v"):
-              data["geode"] = version[1:]
-              p.write_text(json.dumps(data, indent=4) + "\n")
-              print(f"Changed Geode version {version} to {data['geode']}")
-          else:
-              print(f"Geode version already normalized: {version}")
+          data["geode"] = "6.0.0-alpha.1"
+          p.write_text(json.dumps(data, indent=4) + "\n")
+          print(f"Building against Geode SDK {data['geode']}")
 
       - name: Build Android 64-bit Geode mod
         id: build
