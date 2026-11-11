@@ -1,0 +1,37 @@
+name: Build Geode mod
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "GeodeAutoPilotBot.zip"
+      - ".github/workflows/build.yml"
+
+jobs:
+  build-android:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Extract mod source from ZIP
+        run: |
+          mkdir -p project
+          unzip -o GeodeAutoPilotBot.zip -d project
+          test -f project/mod.json
+          test -f project/CMakeLists.txt
+          test -f project/src/main.cpp
+
+      - name: Build Android 64-bit Geode mod
+        id: build
+        uses: geode-sdk/build-geode-mod@main
+        with:
+          path: project
+          target: Android64
+
+      - name: Upload built Geode package
+        uses: actions/upload-artifact@v4
+        with:
+          name: AutoPilotBot-Android64
+          path: ${{ steps.build.outputs.build-output }}/*.geode
+          if-no-files-found: error
